@@ -11,5 +11,7 @@ ignore_missing_imports = true
 
 [tool.ruff]
 line-length = 88
-extend-select = ["E", "F", "W", "C90"]
 exclude = [".venv", "venv", "build", "dist"]
+
+[tool.ruff.lint]
+extend-select = ["E", "F", "W", "C90"]
