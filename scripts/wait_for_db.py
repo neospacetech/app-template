@@ -3,7 +3,6 @@ import time
 
 import psycopg
 
-
 MAX_ATTEMPTS = 20
 SLEEP_SECONDS = 2
 

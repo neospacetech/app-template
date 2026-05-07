@@ -9,7 +9,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 README_PATH = ROOT / "README.md"
 GUIDE_PATH = ROOT / "DEPLOYMENT_GUIDE.md"
@@ -52,7 +51,15 @@ def slugify(value: str) -> str:
 
 def run_ssh(host: str, ssh_key_path: Path, command: str) -> str:
     result = subprocess.run(
-        ["ssh", "-i", str(ssh_key_path), "-p", str(SSH_PORT), f"{SSH_USER}@{host}", command],
+        [
+            "ssh",
+            "-i",
+            str(ssh_key_path),
+            "-p",
+            str(SSH_PORT),
+            f"{SSH_USER}@{host}",
+            command,
+        ],
         check=True,
         capture_output=True,
         text=True,
@@ -78,7 +85,9 @@ def find_free_port(used_ports: set[int], port_range: range) -> int:
     for port in port_range:
         if port not in used_ports:
             return port
-    raise RuntimeError(f"No free port found in range {port_range.start}-{port_range.stop - 1}")
+    raise RuntimeError(
+        f"No free port found in range {port_range.start}-{port_range.stop - 1}"
+    )
 
 
 def render_document(path: Path, replacements: dict[str, str]) -> None:
@@ -119,7 +128,10 @@ def remove_self() -> None:
 
 def main() -> int:
     print("Project bootstrap")
-    print("Answer the questions below and the script will fill the README and config files.")
+    print(
+        "Answer the questions below and the script will fill the README and"
+        " config files."
+    )
 
     app_name_raw = ask_text("What is the app name?")
     app_name = slugify(app_name_raw)
@@ -134,7 +146,12 @@ def main() -> int:
         server_name = "_"
         deploy_mode = "port"
 
-    ssh_key_path = Path(ask_text("Where is the SSH private key?", default=str(Path.home() / ".ssh" / "vps_deploy"))).expanduser()
+    ssh_key_path = Path(
+        ask_text(
+            "Where is the SSH private key?",
+            default=str(Path.home() / ".ssh" / "vps_deploy"),
+        )
+    ).expanduser()
     if not ssh_key_path.exists():
         raise FileNotFoundError(f"SSH private key not found: {ssh_key_path}")
 
@@ -148,7 +165,11 @@ def main() -> int:
         used_ports = used_remote_ports(vps_host, ssh_key_path)
         app_bind_port = find_free_port(used_ports, APP_BIND_RANGE)
 
-    public_endpoint = f"http://{server_name}" if domain_available else f"http://{vps_host}:{public_port}"
+    public_endpoint = (
+        f"http://{server_name}"
+        if domain_available
+        else f"http://{vps_host}:{public_port}"
+    )
 
     flask_secret_key = secrets.token_hex(32)
     postgres_db = app_name

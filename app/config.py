@@ -21,7 +21,9 @@ class BaseConfig:
 
 class DevelopmentConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = _normalize_sqlalchemy_db_url(
-        os.getenv("DATABASE_URL", "postgresql+psycopg://postgres:postgres@db:5432/project")
+        os.getenv(
+            "DATABASE_URL", "postgresql+psycopg://postgres:postgres@db:5432/project"
+        )
     )
 
 
